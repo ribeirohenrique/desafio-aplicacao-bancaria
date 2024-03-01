@@ -1,6 +1,7 @@
 package entities;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Account {
     int accountNumber;
@@ -58,9 +59,15 @@ public class Account {
         accountLimit = amount;
     }
 
-    public double moneyTransfer(List<Account> accountList, int accountNumber, int agencyNumber, double amount) {
+    public void moneyTransfer(List<Account> accountList, int accountNumber, int agencyNumber, double amount) {
 
         //tentar fazer uma lista que busque por accountnumber e agencynumber, se não existir, lancar um erro, se existir, efetuar a transferencia.
-        return 0;
+        List<Account> accountFound = accountList.stream().filter(account -> account.getAccountNumber() == accountNumber && account.getAgencyNumber() == agencyNumber).collect(Collectors.toList());
+        for (Account a : accountFound) {
+            System.out.println(a);
+        }
+        //accountFound.set()
+
+
     }
 }
