@@ -1,14 +1,25 @@
 package entities;
 
+import entities.exceptions.BankingExceptions;
+
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Account {
-    int accountNumber;
-    int agencyNumber;
-    String clientName;
-    double accountBalance;
-    double accountLimit;
-    String accountType;
+    private int accountNumber;
+    private int agencyNumber;
+    private String clientName;
+    private double accountBalance;
+    private double accountLimit;
+    private String accountType;
+    private List<Transaction> transactionHistory;
 
     public Account(int accountNumber, String clientName, double accountLimit, String accountType) {
         this.accountNumber = accountNumber;
@@ -17,6 +28,7 @@ public class Account {
         this.accountLimit = accountLimit;
         this.accountType = accountType;
         this.accountBalance = 0;
+        this.transactionHistory = new ArrayList<>();
     }
 
     public static Account createNewAccount(Account account, List<Account> accountList) {
@@ -79,6 +91,25 @@ public class Account {
         return accountType;
     }
 
+    private void recordTransaction(int accountNumber, String description) {
+        LocalDateTime dateTime = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+        String formattedDateTime = dateTime.format(formatter);
+        Transaction transaction = new Transaction(formattedDateTime, accountNumber, description);
+        transactionHistory.add(transaction);
+    }
+
+    public void saveTransactionHistoryToCSV(String fileName) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName,true))) {
+            for (Transaction transaction : transactionHistory) {
+                writer.append(transaction.getDate() + "," + transaction.getAccountNumber() + "," + transaction.getDescription());
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            System.out.println("Erro ao salvar o histórico de transações: " + e.getMessage());
+        }
+    }
+
     public void depositAccount(int accountNumber, double amount, List<Account> accountList) {
         Account account = findAccount(accountNumber, accountList);
         try {
@@ -86,6 +117,7 @@ public class Account {
                 account.accountBalance += amount;
                 System.out.println("Depósito realizado com sucesso!");
                 System.out.println("Saldo atual: " + account.getAccountBalance());
+                recordTransaction(accountNumber, "Depósito de R$" + amount + " efetuado");
             } else {
                 throw new BankingExceptions("Erro: Não foi possível processar o depósito.");
             }
@@ -101,9 +133,13 @@ public class Account {
                 if (account.getAccountBalance() < amount) {
                     throw new BankingExceptions("Erro: O valor a ser sacado é maior que o saldo atual.");
                 }
+                if (account.getAccountLimit() < amount) {
+                    throw new BankingExceptions("Erro: O valor a ser sacado é maior que o limite atual.");
+                }
                 account.accountBalance -= amount;
                 System.out.println("Saque realizado com sucesso!");
                 System.out.println("Saldo atual: " + account.getAccountBalance());
+                recordTransaction(accountNumber, "Saque de R$" + amount + " efetuado");
             } else {
                 throw new BankingExceptions("Erro: Não foi possível processar o saque.");
             }
@@ -117,9 +153,12 @@ public class Account {
         Account accountSender = findAccount(accountNumberSender, accountList);
         Account accountReceiver = findAccount(accountNumberReceiver, accountList);
         try {
-            if (accountSender != null || accountReceiver != null) {
+            if (accountSender != null && accountReceiver != null) {
                 if (accountSender.getAccountBalance() < amount) {
                     throw new BankingExceptions("Erro: O valor a ser transferido é maior que o saldo atual.");
+                }
+                if (accountSender.getAccountLimit() < amount) {
+                    throw new BankingExceptions("Erro: O valor a ser transferido é maior que o limite atual.");
                 }
                 //primeiro subtrai do Sender
                 accountSender.withdrawAccount(accountNumberSender, amount, accountList);
@@ -127,6 +166,7 @@ public class Account {
                 accountReceiver.depositAccount(accountNumberReceiver, amount, accountList);
                 System.out.println("Transferência realizado com sucesso!");
                 System.out.println("Saldo atual: " + accountSender.getAccountBalance());
+                recordTransaction(accountNumber, "Transferência de R$" + amount + " efetuada para conta " + accountReceiver.getAccountNumber());
             } else {
                 throw new BankingExceptions("Erro: Não foi possível processar a transferência.");
             }
@@ -142,6 +182,7 @@ public class Account {
                 account.accountLimit = newLimit;
                 System.out.println("Limite alterado com sucesso!");
                 System.out.println("Limite atual: " + account.getAccountLimit());
+                recordTransaction(accountNumber, "Limite atualizado para R$" + account.getAccountLimit());
             } else {
                 throw new BankingExceptions("Erro: Não foi possível processar a alteração de limite da conta.");
             }
