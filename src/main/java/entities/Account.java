@@ -105,6 +105,7 @@ public class Account {
                 writer.append(transaction.getDate() + "," + transaction.getAccountNumber() + "," + transaction.getDescription());
                 writer.newLine();
             }
+            transactionHistory.clear();
         } catch (IOException e) {
             System.out.println("Erro ao salvar o histórico de transações: " + e.getMessage());
         }

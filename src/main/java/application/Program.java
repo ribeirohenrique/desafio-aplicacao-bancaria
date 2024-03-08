@@ -4,6 +4,7 @@ import entities.Account;
 import entities.exceptions.BankingExceptions;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -133,8 +134,8 @@ public class Program {
             scanner.nextLine(); // Limpar o buffer do scanner
 
             Account account = Account.findAccount(accountNumber, accountList);
-            if (account != null) {
-                String filename = "historico_transacoes.csv";
+            if (account == null) {
+                String filename = "transaction_history.csv";
                 List<String> transactionHistory = readTransactionHistoryFromFile(filename, accountNumber);
                 if (!transactionHistory.isEmpty()) {
                     System.out.println("Histórico de transações da conta " + accountNumber + ":");
@@ -160,7 +161,8 @@ public class Program {
                 String line;
                 while ((line = br.readLine()) != null) {
                     String[] parts = line.split(",");
-                    if (Integer.parseInt(parts[1]) == accountNumber) {
+                    int number = Integer.parseInt(parts[1]);
+                    if (number == accountNumber) {
                         transactionHistory.add(line);
                     }
                 }
@@ -265,6 +267,18 @@ public class Program {
         } catch (BankingExceptions exceptions) {
             System.out.println(exceptions.getMessage());
         }
+    }
+
+    private static void deleteFile() {
+        File transactionHistory = new File("transaction_history.csv");
+        try {
+            if (!transactionHistory.delete()) {
+                throw new BankingExceptions("Erro ao deletar o histórico de transações");
+            }
+        } catch (BankingExceptions exceptions) {
+            System.out.println(exceptions.getMessage());
+        }
+
     }
 
     private static void screenMenu() {
