@@ -1,7 +1,5 @@
 package entities;
 
-import java.time.LocalDateTime;
-
 public class Transaction {
     private String date;
     private int accountNumber;

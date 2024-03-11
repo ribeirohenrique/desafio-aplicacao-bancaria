@@ -10,6 +10,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class Account {
@@ -153,6 +154,7 @@ public class Account {
     public void transferBetweenAccounts(int accountNumberSender, int accountNumberReceiver, double amount, List<Account> accountList) {
         Account accountSender = findAccount(accountNumberSender, accountList);
         Account accountReceiver = findAccount(accountNumberReceiver, accountList);
+        Date date = new Date();
         try {
             if (accountSender != null && accountReceiver != null) {
                 if (accountSender.getAccountBalance() < amount) {
