@@ -28,15 +28,27 @@ Faça uma aplicação bancária que permita transferências de valores. O sistem
 - Pensem que toda operação repetitiva pode ter sua própria classe ou método, como apresentação das informações na tela (ou input), que pode ter dados como parâmetros.
 
 ### Modo de utilização
+- Para executar, basta ir ao arquivo [Program.java](src/main/java/application/Program.java) e executar o método **Main**;
+- O arquivo de exportação é designado por [transaction_history.csv](transaction_history.csv) sendo mapeado para ser gerado na raiz do projeto;
+- Foi optado pelo armazenamento em memória (listas) das contas cadastradas, ou seja, o dado não é persistente e a cada execução se faz necessário o recadastramento de contas;
+- Até o momento, não foi implementado nenhuma regra com base na agência, esta ficando com padrão **1**;
+- O saldo de toda conta nova, inicia em zero, sendo necessário efetuar um depósito inicial para realizar transações, visto que existem regras que validam o saldo;
 - O projeto foi desenvolvido com algumas regras seguindo modelos de bancos existentes, analisando comportamento de uso cotidiano como, por exemplo:
 1. Não permitir a criação de contas com o mesmo número;
-2. Ao buscar uma conta, se a mesma não existir, retornar erro;
-3. Armazenar as transações apenas após o encerramento selecionando a **opção 7**;
-4. Saque só é efetivado **se** houver saldo disponível **e se** for abaixo do limite de saque da conta;
-5. Transferência entre contas só é efetivada **se** as duas contas existirem, **se** houver saldo na conta remetente **e se** for abaixo do limite de saque;
+2. Todas as operações dispõem de busca direta na lista de contas, caso nao forem encontradas, retorna erro;
+3. Ao buscar uma conta, se a mesma não existir, retornar erro;
+4. Armazenar as transações apenas após o encerramento selecionando a **opção 7**;
+5. Saque só é efetivado **se** houver saldo disponível **e se** for abaixo do limite de saque da conta;
+6. Transferência entre contas só é efetivada **se** as duas contas existirem, **se** houver saldo na conta remetente **e se** for abaixo do limite de saque;
 
 
 ### Especificações
 1. O formato de armazenamento no arquivo **.csv** seguirá o seguinte padrão:
-> **data/hora, número da conta, descrição da transação**
+> **data e hora, número da conta, descrição da transação**
 > 08-03-2024 17:10:51,123,Depósito de R$689.0 efetuado
+
+2. Diagrama de classes 
+> [![](https://mermaid.ink/img/pako:eNqVU01vwjAM_StRToyPw649TIJt0g6MC9VOvZjEFGttUiUpVYXgty80qShiaOyU-OXZfnbsAxdaIk-4KMDaN4LcQJmpzmJzIXStHDtkirEZWztDKmeiIFRuBSUGeEnWnVIDyoJwpNWJuYvx4R-1aQOTfCzIUYl2VZcbNAGVut4UyCAkW1JJbkAP6H3-AgpQAq8Uxqe0rTp8woRBcLjCJlY0iuc0iI_W6amvOHhtScnegf4i7wmbqOVX8l6TDCINCm3koGGBH7RfiBNmYY_pTStT_br-Gt2yJVbakrsSHFp1V8uENeR20kDzP6_uf7doFugaRBUpNng_FkLsQOU4H_z5A7mP_WAOutIP551hiRMh_fdfA2iFoeocoYub9VWwjD9nnI1nsxd_vZ1kNvavw_yZ4lNeoimBpN-jTo533KHfD574qwTznXGfxfOgdnrdKsETZ2qc8ro6K4trdw2-S_L5eLKFwnoQO_MzLuv5OP4AHflURg?type=png)](https://mermaid.live/edit#pako:eNqVU01vwjAM_StRToyPw649TIJt0g6MC9VOvZjEFGttUiUpVYXgty80qShiaOyU-OXZfnbsAxdaIk-4KMDaN4LcQJmpzmJzIXStHDtkirEZWztDKmeiIFRuBSUGeEnWnVIDyoJwpNWJuYvx4R-1aQOTfCzIUYl2VZcbNAGVut4UyCAkW1JJbkAP6H3-AgpQAq8Uxqe0rTp8woRBcLjCJlY0iuc0iI_W6amvOHhtScnegf4i7wmbqOVX8l6TDCINCm3koGGBH7RfiBNmYY_pTStT_br-Gt2yJVbakrsSHFp1V8uENeR20kDzP6_uf7doFugaRBUpNng_FkLsQOU4H_z5A7mP_WAOutIP551hiRMh_fdfA2iFoeocoYub9VWwjD9nnI1nsxd_vZ1kNvavw_yZ4lNeoimBpN-jTo533KHfD574qwTznXGfxfOgdnrdKsETZ2qc8ro6K4trdw2-S_L5eLKFwnoQO_MzLuv5OP4AHflURg)
+
+3. Diagrama de sequencia
+> [![](https://mermaid.ink/img/pako:eNq1UsFqQjEQ_JWwpwr2B3IQWtpjS0GPuSzJqqF9m-dmw6OI_258L4pg8dDSnLIzszOHnT34FAgsZNoVYk8vETeCnWNTX4-i0cceWc2HpJ-JJ-9TYb0lVoKc0WtM7Hiim4l5XCzOe9Z4IVR6p6EhD7NJ3MZRfOVljZBPEq6g88adkEB9ylH_FHHHfoi6DYLDf_nrSbkmeSYdiLjh-Tc5MIeOpMMY6tn3p30HuqWOHNj6DSifDhwfqg6LpuU3e7AqheZQ-lAv1SoCdo1f-YK-hqhJLiCN49tUrrFjhyMIidSN?type=png)](https://mermaid.live/edit#pako:eNq1UsFqQjEQ_JWwpwr2B3IQWtpjS0GPuSzJqqF9m-dmw6OI_258L4pg8dDSnLIzszOHnT34FAgsZNoVYk8vETeCnWNTX4-i0cceWc2HpJ-JJ-9TYb0lVoKc0WtM7Hiim4l5XCzOe9Z4IVR6p6EhD7NJ3MZRfOVljZBPEq6g88adkEB9ylH_FHHHfoi6DYLDf_nrSbkmeSYdiLjh-Tc5MIeOpMMY6tn3p30HuqWOHNj6DSifDhwfqg6LpuU3e7AqheZQ-lAv1SoCdo1f-YK-hqhJLiCN49tUrrFjhyMIidSN)
