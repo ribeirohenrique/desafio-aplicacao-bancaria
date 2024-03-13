@@ -152,10 +152,16 @@ public class Account {
     }
 
     public void transferBetweenAccounts(int accountNumberSender, int accountNumberReceiver, double amount, List<Account> accountList) {
+
+        // Obtém o horário atual
+        LocalDateTime currentTime = LocalDateTime.now();
         Account accountSender = findAccount(accountNumberSender, accountList);
         Account accountReceiver = findAccount(accountNumberReceiver, accountList);
-        Date date = new Date();
         try {
+            // Verifique se o horário atual está entre 21h e 6h
+            if (currentTime.getHour() >= 21 || currentTime.getHour() < 6) {
+                throw new BankingExceptions("Transferências não são permitidas entre as 21h e 6h.");
+            }
             if (accountSender != null && accountReceiver != null) {
                 if (accountSender.getAccountBalance() < amount) {
                     throw new BankingExceptions("Erro: O valor a ser transferido é maior que o saldo atual.");
